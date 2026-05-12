@@ -1,43 +1,39 @@
-name: CI/CD Pipeline
+# This file tells GitHub: "Every time someone pushes code, do these things."
 
+name: CI Pipeline           # The name you'll see in the GitHub Actions tab
+
+# WHEN should this run?
 on:
-  push:
+  push:                     # Run when code is pushed...
+    branches: [main]        # ...to the main branch
+  pull_request:             # Also run on pull requests
     branches: [main]
 
-  pull_request:
-    branches: [main]
-
+# WHAT should it do?
 jobs:
   check-code:
     name: Lint and Test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Use a Linux machine provided by GitHub
 
     steps:
-      - name: Checkout Code
+      # Step 1: Download your code onto the runner
+      - name: Get the code
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      # Step 2: Set up Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install Dependencies
+      # Step 3: Install your packages (pip install)
+      - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run Lint
+      # Step 4: Check code style
+      - name: Check code style (lint)
         run: flake8 app/
 
-      - name: Run Tests
+      # Step 5: Run tests
+      - name: Run tests
         run: pytest tests/
-
-  build-docker:
-    name: Build Docker Image
-    runs-on: ubuntu-latest
-    needs: check-code
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Build Docker Image
-        run: docker build -t flask-cicd-app .

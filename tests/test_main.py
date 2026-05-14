@@ -8,4 +8,4 @@ def test_home():
 def test_health():
     client = app.test_client()
     response = client.get("/health")
-    assert response.status_code == 500  # INTENTIONALLY BROKEN - should be 200
+    assert response.status_code == 200  # FIXED - back to correct value
